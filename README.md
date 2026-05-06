@@ -1,9 +1,8 @@
 # realtime-transcriber のローカルLLM対応
 
-オリジナルの
-[realtime-transcriber](https://qiita.com/s_moriyama/items/af1110bb8566136adb23)は、@s_moriyama (Satoshi Moriyama) さんが作成した、英語音声をリアルタイム文字おこし翻訳をしてくれるCLIツールです。qiita に解説と、github にコードを公開してくれています。
+[オリジナルのrealtime-transcriber](https://qiita.com/s_moriyama/items/af1110bb8566136adb23)は、@s_moriyama (Satoshi Moriyama) さんが作成した、英語音声のリアルタイム文字おこししと日本語への翻訳をしてくれるCLIツールです。qiita に解説と、[github にコードを公開](https://github.com/SatoshiMoriyama/live-translate/tree/main/packages/realtime-transcriber)してくれています。
 
-オリジナルはリアルタイム翻訳と1分ごとの要約機能はAWSに依存しているため、本改造ではローカルLLM (Ollama)でモデルを使う機能を付加しました。Claude Code を使って実装しています。またローカルLLMはデフォルトでモデルはgemma4:e4bを使っています。
+オリジナルのrealtime-transcriberが持つリアルタイム翻訳と1分ごとの要約機能はAWSに依存しているため、本改造ではローカルLLM (Ollama)経由でモデルを使う機能を付加しました。Claude Code を使って実装しています。またローカルLLM経由で利用するモデルはデフォルトで`gemma4:e4b`としています。後述の環境変数で設定可能です。
 
 # realtime-transcriber
 
@@ -92,7 +91,7 @@ uv run realtime-transcriber
 ### 別モデルの利用
 
 ```bash
-OLLAMA_TRANSLATE_MODEL=gemma4:31b OLLAMA_SUMMARY_MODEL=qwen3.6:latest uv run realtime-transcriber
+OLLAMA_TRANSLATE_MODEL=gemma4:31b OLLAMA_SUMMARY_MODEL=qwen3.6:35b uv run realtime-transcriber
 ```
 
 ### Bedrock / AWS Translate を使う場合
@@ -205,10 +204,10 @@ OLLAMA_KEEP_ALIVE=30m                # 既定
 
 | モデル | サイズ | 用途 | 備考 |
 |--------|--------|------|------|
-| `gemma4:e4b`（翻訳・要約の既定） | 9.6GB | 翻訳・要約 | 軽量・高速・1秒未満の翻訳が可能 |
+| `gemma4:e4b`（翻訳・要約の既定） | 9.6GB | 翻訳・要約 | 軽量・高速・1秒未満で翻訳が可能 (CPU M3MAX, RAM 64GB) |
 | `gpt-oss:20b` | 13GB | 翻訳・要約 | バランスが良く、JSON出力も安定 |
 | `gemma4:31b` | 19GB | 翻訳・要約 | より高品質だが遅い |
-| `qwen3.6:latest` | 23GB | 要約 | 多言語に強いが thinking モデルなので `think=False` で運用 |
+| `qwen3.6:35b` | 23GB | 要約 | 多言語に強いが thinking モデルなので `think=False` で運用 |
 | `gpt-oss:120b` | 65GB | 要約 | 高品質だが重い。VRAMに余裕があれば |
 
 ### Bedrock 使用時の設定
